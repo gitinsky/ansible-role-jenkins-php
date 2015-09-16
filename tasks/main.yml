@@ -68,5 +68,11 @@
 - name: install required plugins
   shell: java -jar /root/jenkins-cli.jar -s http://localhost:8080 install-plugin checkstyle cloverphp crap4j dry htmlpublisher jdepend plot pmd violations warnings xunit
 
+- name: mkdir php-template
+  file: state=directory dest=/var/lib/jenkins/jobs/php-template owner=jenkins group=jenkins
+
+- name: get config.xml
+  get_url: url=https://raw.github.com/sebastianbergmann/php-jenkins-template/master/config.xml dest=/var/lib/jenkins/jobs/php-template/config.xml owner=jenkins group=jenkins
+
 - name: perform a safe restart
   shell: java -jar /root/jenkins-cli.jar -s http://localhost:8080 safe-restart
