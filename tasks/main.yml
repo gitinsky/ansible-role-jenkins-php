@@ -2,6 +2,69 @@
 - name: download Jenkins CLI
   get_url: url=http://localhost:8080/jnlpJars/jenkins-cli.jar dest=/root/jenkins-cli.jar
 
+- name: install remi repo
+  yum: name=http://rpms.remirepo.net/enterprise/remi-release-6.rpm state=present
+
+- name: install php
+  yum: name=php-cli state=present enablerepo=remi
+
+- name: install php-xml
+  yum: name=php-xml state=present enablerepo=remi
+
+- name: install php-mbstring
+  yum: name=php-mbstring state=present enablerepo=remi
+
+- name: make /opt/composer
+  file: state=directory dest=/opt/composer
+
+- name: get composer
+  shell: cd /opt/composer && curl -sS https://getcomposer.org/installer | php creates=/opt/composer/composer.phar
+
+- name: create a link to composer
+  file: state=link src=/opt/composer/composer.phar dest=/usr/bin/composer
+
+- name: install phpunit
+  composer: command="require phpunit/phpunit" working_dir=/opt/composer no_dev=no optimize_autoloader=no
+
+- name: create a link to phpunit
+  file: state=link src=/opt/composer/vendor/bin/phpunit dest=/usr/bin/phpunit
+
+- name: install php_codesniffer
+  composer: command="require squizlabs/php_codesniffer" working_dir=/opt/composer no_dev=no optimize_autoloader=no
+
+- name: create a link to phpcs
+  file: state=link src=/opt/composer/vendor/bin/phpcs dest=/usr/bin/phpcs
+
+- name: install phploc
+  composer: command="require phploc/phploc" working_dir=/opt/composer no_dev=no optimize_autoloader=no
+
+- name: create a link to phploc
+  file: state=link src=/opt/composer/vendor/bin/phploc dest=/usr/bin/phploc
+
+- name: install pdepend
+  composer: command="require pdepend/pdepend" working_dir=/opt/composer no_dev=no optimize_autoloader=no
+
+- name: create a link to pdepend
+  file: state=link src=/opt/composer/vendor/bin/pdepend dest=/usr/bin/pdepend
+
+- name: install phpmd
+  composer: command="require phpmd/phpmd" working_dir=/opt/composer no_dev=no optimize_autoloader=no
+
+- name: create a link to phpmd
+  file: state=link src=/opt/composer/vendor/bin/phpmd dest=/usr/bin/phpmd
+
+- name: install phpcpd
+  composer: command="require sebastian/phpcpd" working_dir=/opt/composer no_dev=no optimize_autoloader=no
+
+- name: create a link to phpcpd
+  file: state=link src=/opt/composer/vendor/bin/phpcpd dest=/usr/bin/phpcpd
+
+- name: install phpdox
+  composer: command="require theseer/phpdox" working_dir=/opt/composer no_dev=no optimize_autoloader=no
+
+- name: create a link to phpdox
+  file: state=link src=/opt/composer/vendor/bin/phpdox dest=/usr/bin/phpdox
+
 - name: install required plugins
   shell: java -jar /root/jenkins-cli.jar -s http://localhost:8080 install-plugin checkstyle cloverphp crap4j dry htmlpublisher jdepend plot pmd violations warnings xunit
 
