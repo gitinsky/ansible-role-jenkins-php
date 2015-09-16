@@ -1,0 +1,9 @@
+---
+- name: download Jenkins CLI
+  get_url: url=http://localhost:8080/jnlpJars/jenkins-cli.jar dest=/root/jenkins-cli.jar
+
+- name: install required plugins
+  shell: java -jar /root/jenkins-cli.jar -s http://localhost:8080 install-plugin checkstyle cloverphp crap4j dry htmlpublisher jdepend plot pmd violations warnings xunit
+
+- name: perform a safe restart
+  shell: java -jar /root/jenkins-cli.jar -s http://localhost:8080 safe-restart
